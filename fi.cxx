@@ -32,6 +32,7 @@ bool g_fFullData = FALSE;
 bool g_fTotalsOnly = FALSE;
 bool g_fOneThread = FALSE;
 bool g_fUsage = FALSE; // disk space usage of each of top level directories under the root of the request.
+HANDLE g_hConsole = INVALID_HANDLE_VALUE;
 
 LONGLONG g_llMinSize = -1;
 NUMBERFMT g_NumberFormat;
@@ -352,7 +353,10 @@ LONGLONG CompressedSize( const WCHAR * pwcPath )
 
 void FullData( const WIN32_FIND_DATA & fd, const WCHAR * pwcPath, LONGLONG & llFileSize )
 {
-    wprintf( L"%ws%ws\n", pwcPath, fd.cFileName );
+    // wprintf( L"%ws%ws\n", pwcPath, fd.cFileName );
+    WriteConsole( g_hConsole, pwcPath, wcslen( pwcPath ), 0, 0 );
+    WriteConsole( g_hConsole, fd.cFileName, wcslen( fd.cFileName ), 0, 0 );
+    wprintf( L"\n" );
 
     //wprintf( L"  attrib %#x, reserved0: %#x\n", fd.dwFileAttributes, fd.dwReserved0 );
 
@@ -534,7 +538,10 @@ void DoScope( const WCHAR * pwcPath, const WCHAR * pwcSpec, int iDepth, LONGLONG
                 {
                     _wcslwr( fd.cFileName );
 
-                    wprintf( L"%ws%ws\n", pwcPath, fd.cFileName );
+                    //wprintf( L"%ws%ws\n", pwcPath, fd.cFileName );
+                    WriteConsole( g_hConsole, pwcPath, wcslen( pwcPath ), 0, 0 );
+                    WriteConsole( g_hConsole, fd.cFileName, wcslen( fd.cFileName ), 0, 0 );
+                    wprintf( L"\n" );
                 }
             }
         } while ( FindNextFile( hFile, &fd ) );
@@ -643,7 +650,9 @@ void DoScope( const WCHAR * pwcPath, const WCHAR * pwcSpec, int iDepth, LONGLONG
         RenderLL( llLocalCountOfFiles, awcTmp, cwcTmp);
         wprintf( L"%14ws  ", awcTmp );
 
-        wprintf( L"%ws\n", pwcPath );
+        //wprintf( L"%ws\n", pwcPath );
+        WriteConsole( g_hConsole, pwcPath, wcslen( pwcPath ), 0, 0 );
+        wprintf( L"\n" );
     }
 } //DoScope
 
@@ -707,6 +716,7 @@ extern "C" int __cdecl wmain( int argc, WCHAR * argv[] )
 {
     __try
     {
+    g_hConsole = GetStdHandle( STD_OUTPUT_HANDLE );
     ZeroMemory( &g_NumberFormat, sizeof g_NumberFormat );
     g_NumberFormat.NumDigits = 0;
     g_NumberFormat.Grouping = 3;
