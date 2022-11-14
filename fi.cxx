@@ -202,7 +202,8 @@ class ExtensionSet
             {
                 ExtensionEntry * p = aEntries[ i ];
                 RenderLL( p->Bytes(), awc, _countof( awc ) - 1 );
-                wprintf( L"%19ws %10I64d  %ws\n", awc, p->Count(), p->Extension() );
+                RenderLL( p->Count(), awc2, _countof( awc2 ) - 1 );
+                wprintf( L"%19ws %12ws  %ws\n", awc, awc2, p->Extension() );
             }
 
             delete [] aEntries;
@@ -263,13 +264,15 @@ class ExtensionSet
             PrintInternal( p->Left() );
 
             RenderLL( p->Bytes(), awc, _countof( awc ) - 1 );
-            wprintf( L"%19ws %10I64d %40ws\n", awc, p->Count(), p->Extension() );
+            RenderLL( p->Count(), awc2, _countof( awc2 ) - 1 );
+            wprintf( L"%19ws %12ws %40ws\n", awc, awc2, p->Extension() );
 
             PrintInternal( p->Right() );
         }
 
         ExtensionEntry * pRoot;
         WCHAR awc[ 100 ];
+        WCHAR awc2[ 100 ];
 };
 
 ExtensionSet g_ExtensionSet;
@@ -879,8 +882,8 @@ extern "C" int __cdecl wmain( int argc, WCHAR * argv[] )
 
     if ( g_fExtensions )
     {
-        wprintf( L"              bytes      files  extension\n" );
-        wprintf( L"              -----      -----  ---------\n" );
+        wprintf( L"              bytes        files  extension\n" );
+        wprintf( L"              -----        -----  ---------\n" );
     }
 
     // Actually do the enumeration
